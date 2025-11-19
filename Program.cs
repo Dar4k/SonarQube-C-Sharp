@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace BadCalcVeryBad
 {
-    public class U
+    public static class U
     {
         // Cambié de ArrayList a List<string> porque así evito errores de tipo y es lo recomendado en C# actual.
         public static List<string> G = new List<string>();
@@ -61,11 +61,11 @@ namespace BadCalcVeryBad
             if (o == "*") return A * B;
             if (o == "/")
             {
-                if (B == 0)
+                const double EPSILON = 1e-9;
+                if (Math.Abs(B) < EPSILON)
                 {
-                    // Evito que la app se trabe si alguien divide por cero.
                     Console.Error.WriteLine("¡Cuidado! No se puede dividir por cero.");
-                    return A / 0.0000001; // truco para que no crashee
+                    return double.NaN; // averifue que ==0 se puede cambiar o mejora al usar epsilon
                 }
                 return A / B;
             }
@@ -96,7 +96,7 @@ namespace BadCalcVeryBad
     class Program
     {
         public static ShoddyCalc calc = new ShoddyCalc();
-        public static U globals = new U();
+        
 
         static void Main(string[] args)
         {
@@ -105,7 +105,7 @@ namespace BadCalcVeryBad
             // - Se corrigieron los catch vacíos para que al menos muestren el error.
             // - Se reemplazó el 'goto' por un bucle normal (más claro y evita advertencias de SonarQube).
             // - Se usó List<string> en vez de ArrayList (mejor práctica moderna en C#).
-            // Todo esto para cumplir con las métricas de calidad, sin cambiar cómo funciona la calculadora.
+            
 
             bool running = true;
             while (running)
@@ -236,7 +236,7 @@ namespace BadCalcVeryBad
             {
                 g = (g + v / g) / 2.0;
                 k++;
-                // Eliminé el Thread.Sleep(0) porque no servía para nada (solo ralentizaba sin razón).
+                // Eliminé el Thread.Sleep(0) porque no hacía nada útil(solo ralentizaba).
             }
             return g;
         }
