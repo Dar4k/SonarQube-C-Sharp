@@ -14,7 +14,17 @@ namespace BadCalcVeryBad
     public static class U
     {
         // Cambié de ArrayList a List<string> porque así evito errores de tipo y es lo recomendado en C# actual.
-        public static List<string> G = new List<string>();
+        // Campo privado: solo esta clase puede modificarlo
+        private static readonly List<string> _history = new List<string>();
+
+        // Propiedad de solo lectura para acceso seguro desde fuera
+        public static IReadOnlyList<string> History => _history;
+
+        // Método controlado para agregar al historial
+        public static void AddToHistory(string entry)
+        {
+            _history.Add(entry);
+        }
 
         // Dejé estas variables públicas porque el código las usa en varios lados,
         // aunque en un proyecto profesional las haría privadas para evitar problemas.
@@ -149,7 +159,7 @@ namespace BadCalcVeryBad
                 {
                     if (o == "9")
                     {
-                        foreach (var item in U.G) Console.WriteLine(item);
+                        foreach (var item in U.History) Console.WriteLine(item);
                         Thread.Sleep(100);
                         continue;
                     }
@@ -188,7 +198,7 @@ namespace BadCalcVeryBad
                 try
                 {
                     var line = a + "|" + b + "|" + op + "|" + res.ToString("0.###############", CultureInfo.InvariantCulture);
-                    U.G.Add(line);
+                    U.AddToHistory(line); // ? Ahora usamos el método controlado
                     File.AppendAllText("history.txt", line + Environment.NewLine);
                 }
                 catch (Exception ex)
@@ -205,7 +215,7 @@ namespace BadCalcVeryBad
             // Al salir, guardamos el historial en un archivo temporal.
             try
             {
-                File.WriteAllText("leftover.tmp", string.Join(",", U.G.ToArray()));
+                File.WriteAllText("leftover.tmp", string.Join(",", U.History));
             }
             catch (Exception ex)
             {
