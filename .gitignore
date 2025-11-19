@@ -1,0 +1,17 @@
+# Carpetas de Visual Studio
+.vs/
+
+# Carpetas de compilación
+bin/
+obj/
+
+# Archivos de SonarScanner
+.sonarqube/
+
+# Archivos temporales
+*.user
+*.suo
+*.cache
+*.pdb
+*.dll
+*.exe
